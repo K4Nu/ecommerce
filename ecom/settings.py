@@ -77,9 +77,9 @@ TEMPLATES = [
         },
     },
 ]
-SOCIALACCOUNT_ADAPTER = 'users.adapters.MySocialAccountAdapter'
-
 WSGI_APPLICATION = "ecom.wsgi.application"
+
+AUTH_USER_MODEL = 'users.AppUser'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -144,6 +144,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_RATE_LIMITS = {
     'login': '20/m',
@@ -152,13 +153,14 @@ ACCOUNT_RATE_LIMITS = {
 SOCIALACCOUNT_LOGIN_ON_GET=True
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
-ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL="/"
 LOGIN_URL = '/accounts/login/'
 PROFILE_CREATION_REDIRECT_URL = '/profile/'
 LOGIN_REDIRECT_URL = '/'  # Optional, but recommended for default login redirection
-SITE_ID=2
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+SITE_ID=3
 
 
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
@@ -167,7 +169,6 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-
 
 ACCOUNT_FORMS = {
     'signup': 'users.forms.CustomSignupForm',
