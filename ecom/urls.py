@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from users import views
+from products import views as product
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("",views.index,name='index'),
     path("user/",include("users.urls")),
     path('accounts/', include('allauth.urls')),
+    path("add-products",product.AddProductView.as_view(), name='add_product'),
 ]

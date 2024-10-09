@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block layout %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-8">  <!-- Adjust form width by controlling column size -->
+            <h2 class="text-center">Add a New Product</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Iterate through form fields -->
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field|add_class:"form-control" }}  <!-- Apply Bootstrap class to all fields -->
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.name == "images" %}
+                            <small class="form-text text-danger">Remember max 5 images</small>
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary btn-block">Add Product</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
