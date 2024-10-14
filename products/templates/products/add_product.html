@@ -1,26 +1,28 @@
 {% extends 'base.html' %}
-
 {% load widget_tweaks %}
 
 {% block layout %}
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-8">  <!-- Adjust form width by controlling column size -->
+        <div class="col-md-6 col-lg-8">
             <h2 class="text-center">Add a New Product</h2>
+            <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                <!-- Iterate through form fields -->
                 {% for field in form %}
                     <div class="form-group">
                         {{ field.label_tag }}
-                        {{ field|add_class:"form-control" }}  <!-- Apply Bootstrap class to all fields -->
+
+                        {% if field.name == "size" %}
+                            <select name="size" id="size" class="form-control">
+                                <!-- Options will be added dynamically using JavaScript -->
+                            </select>
+                        {% else %}
+                            {{ field|add_class:"form-control" }}  <!-- Apply Bootstrap class -->
+                        {% endif %}
+
                         {% if field.help_text %}
                             <small class="form-text text-muted">{{ field.help_text }}</small>
-                        {% endif %}
-                        {% if field.name == "images" %}
-                            <small class="form-text text-danger">Remember max 5 images</small>
                         {% endif %}
 
                         {% for error in field.errors %}
@@ -30,10 +32,75 @@
                         {% endfor %}
                     </div>
                 {% endfor %}
-
                 <button type="submit" class="btn btn-primary btn-block">Add Product</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // Define sizes for adult and kids
+    const SIZES = {
+        adult: [
+            ["S", "Small"],
+            ["M", "Medium"],
+            ["L", "Large"],
+            ["XL", "Extra Large"],
+            ["XXL", "2X Large"]
+        ],
+        kid: [
+            ["XS", "Extra Small(4-5 years)"],
+            ["S", "Small(6-7 years)"],
+            ["M", "Medium(8-9 years)"],
+            ["L", "Large(10-11 years)"],
+            ["XL", "Extra Large(12-13 years)"]
+        ]
+    };
+
+    // Reusable function to populate the size dropdown
+    function populateSizes(sizes) {
+        const sizeSelect = document.getElementById("size");
+        // Clear current options
+        sizeSelect.innerHTML = "";
+
+        // Add the new size options
+        sizes.forEach(function(size) {
+            const option = document.createElement("option");
+            option.value = size[0];
+            option.textContent = size[1];
+            sizeSelect.appendChild(option);
+        });
+    }
+
+    // On page load, set up event listener for the gender field
+    document.addEventListener("DOMContentLoaded", function() {
+        const genderField = document.querySelector('select[name="gender"]');
+        const sizeField = document.getElementById("size");
+
+        if (genderField && sizeField) {
+            // Set default size options based on initial gender value
+            updateSizeOptions(genderField.value);
+
+            // Update sizes when gender changes
+            genderField.addEventListener("change", function(event) {
+                updateSizeOptions(event.target.value);
+            });
+        }
+
+        // Function to update the size dropdown based on gender
+        function updateSizeOptions(gender) {
+            if (["M", "F", "O"].includes(gender)) {
+                // For adult sizes (Male, Female, Other)
+                populateSizes(SIZES.adult);
+            } else if (["B", "G"].includes(gender)) {
+                // For kid sizes (Child Boy, Child Girl)
+                populateSizes(SIZES.kid);
+            } else {
+                // Fallback for other cases (if needed)
+                sizeField.innerHTML = '<option value="">Select a size</option>';
+            }
+        }
+    });
+</script>
+
 {% endblock %}
